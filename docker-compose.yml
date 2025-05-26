@@ -1,0 +1,120 @@
+services:
+  # 1. 게이트웨이 서버 서비스 정의
+  gateway-server:
+    build: ./gateway
+    ports:
+      - "8084:8084"
+    environment:
+      # 게이트웨이 서버에 필요한 환경 변수 (예: 다른 서버 주소)
+      - AUTH_SERVER_URL=http://auth-server:8083
+      - ADMIN_SERVER_URL=http://admin-server:8080
+    depends_on:
+      - auth-server
+      - admin-server
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8084/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - my_app_network
+
+  # 2. 인증 서버 서비스 정의
+  auth-server:
+    build: ./auth
+    ports:
+      - "8083:8083"
+    environment:
+      - DB_HOST=auth_db
+      - DB_PORT=3306
+      - DB_NAME=${AUTH_DB_NAME}
+      - DB_USER=${AUTH_DB_USER}
+      - DB_PASSWORD=${AUTH_DB_PASSWORD}
+      - GOOGLE_ID=${GOOGLE_ID}
+      - GOOGLE_PASSWORD=${GOOGLE_PASSWORD}
+      - KAKAO_ID=${KAKAO_ID}
+      - KAKAO_PASSWORD=${KAKAO_PASSWORD}
+      - SMTP_EMAIL=${SMTP_EMAIL}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_REFRESH_SECRET_KEY=${JWT_REFRESH_SECRET_KEY}
+      - ADMIN_SERVER_URL=http://admin-server:8080
+    depends_on:
+      - auth_db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - my_app_network
+
+  # 3. 관리자 서버 서비스 정의
+  admin-server:
+    build: ./admin/backend
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=admin_db
+      - DB_PORT=3306
+      - DB_NAME=${ADMIN_DB_NAME}
+      - DB_USER=${ADMIN_DB_USER}
+      - DB_PASSWORD=${ADMIN_DB_PASSWORD}
+      - AUTH_SERVER_URL=http://auth-server:8083
+    depends_on:
+      - admin_db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - my_app_network
+
+  # 4. 인증 서버용 MariaDB 서비스 정의
+  auth_db:
+    image: mariadb:10.6
+    environment:
+      MARIADB_ROOT_PASSWORD: ${AUTH_DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${AUTH_DB_NAME}
+      MARIADB_USER: ${AUTH_DB_USER}
+      MARIADB_PASSWORD: ${AUTH_DB_PASSWORD}
+    ports:
+      - "13306:3306"
+    volumes:
+      - auth_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "${AUTH_DB_USER}", "-p${AUTH_DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - my_app_network
+
+  # 5. 관리자 서버용 MariaDB 서비스 정의
+  admin_db:
+    image: mariadb:10.6
+    environment:
+      MARIADB_ROOT_PASSWORD: ${ADMIN_DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${ADMIN_DB_NAME}
+      MARIADB_USER: ${ADMIN_DB_USER}
+      MARIADB_PASSWORD: ${ADMIN_DB_PASSWORD}
+    ports: # 외부에서 DB에 직접 접근할 필요가 없다면 주석 처리하는 것이 좋습니다.
+      - "13307:3306"
+    volumes:
+      - admin_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "${ADMIN_DB_USER}", "-p${ADMIN_DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - my_app_network
+
+volumes:
+  auth_db_data:
+  admin_db_data:
+
+networks:
+  my_app_network:
+    driver: bridge
