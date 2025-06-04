@@ -1,7 +1,7 @@
 services:
   # 1. 게이트웨이 서버 서비스 정의
   gateway-server:
-    build: ./gateway
+    image: ${DOCKER_USERNAME}/tailtales-gateway:${GATEWAY_IMAGE_TAG:-dev}
     ports:
       - "8084:8084"
     environment:
@@ -21,7 +21,7 @@ services:
 
   # 2. 인증 서버 서비스 정의
   auth-server:
-    build: ./auth
+    image: ${DOCKER_USERNAME}/tailtales-auth:${AUTH_IMAGE_TAG:-dev}
     ports:
       - "8083:8083"
     environment:
@@ -51,7 +51,7 @@ services:
 
   # 3. 관리자 서버 서비스 정의
   admin-server:
-    build: ./admin/backend
+    image: ${DOCKER_USERNAME}/tailtales-admin:${ADMIN_IMAGE_TAG:-dev}
     ports:
       - "8080:8080"
     environment:
@@ -113,7 +113,7 @@ services:
 
   # 6. 이미지 서비스 정의
   image-server:
-    build: ./image
+    image: ${DOCKER_USERNAME}/tailtales-image:${IMAGE_IMAGE_TAG:-dev}
     ports:
       - "8085:8085"
     environment:
