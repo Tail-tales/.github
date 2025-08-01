@@ -29,7 +29,7 @@ TailTales는 고슴도치, 햄스터, 도마뱀, 새, 곤충 등 특별한 반�
 
 **Database**  
 
-![MariaDB](https://img.shields.io/badge/MariaDB-%231F305F?style=flat&logo=MariaDB&logoColor=white)
+![MariaDB](https://img.shields.io/badge/MariaDB-%231F305F?style=flat&logo=MariaDB&logoColor=white) ![S3 Bucket](https://img.shields.io/badge/S3%20Bucket-%2377B829?style=flat&logo=bitbucket&logoColor=white)  
 
 **I<small>ntegrated</small> D<small>evelopment</small> E<small>nvironment</small>**  
 
@@ -37,7 +37,7 @@ TailTales는 고슴도치, 햄스터, 도마뱀, 새, 곤충 등 특별한 반�
 
 **DevOps**
 
-![Github Actions](https://img.shields.io/badge/Github%20Actions-%232088FF?style=flat&logo=Github%20Actions&logoColor=white) ![Figma](https://img.shields.io/badge/Docker-%232496ED?style=flat&logo=Docker&logoColor=white) ![S3 Bucket](https://img.shields.io/badge/S3%20Bucket-%2377B829?style=flat&logo=bitbucket&logoColor=white)
+![Github Actions](https://img.shields.io/badge/Github%20Actions-%232088FF?style=flat&logo=Github%20Actions&logoColor=white) ![Figma](https://img.shields.io/badge/Docker-%232496ED?style=flat&logo=Docker&logoColor=white)  
 
 **Tool**  
 
